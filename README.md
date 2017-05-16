@@ -1,0 +1,2 @@
+# QiniuAndroidRTCStreamingPKmode
+七牛连麦SDK实践demo；PK模式；副主播和观众切换
