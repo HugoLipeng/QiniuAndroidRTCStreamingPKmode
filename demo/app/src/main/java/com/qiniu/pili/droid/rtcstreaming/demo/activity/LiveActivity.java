@@ -294,7 +294,8 @@ public class LiveActivity extends AppCompatActivity implements AudioSourceCallba
         }
 
         String UserID = mRoomId;//StreamUtils.DEFAULT_RTC_USER_ID;
-        showToast("传入的连麦参数"+"Id==>"+UserID+";"+"roomname==>"+mRoomName+";"+"roomToken==>"+roomToken+";", Toast.LENGTH_SHORT);
+        //showToast("传入的连麦参数"+"Id==>"+UserID+";"+"roomname==>"+mRoomName+";"+"roomToken==>"+roomToken+";", Toast.LENGTH_SHORT);
+        Log.d(TAG, "startConferenceInternal: UserId ==> "+UserID+";"+"RoomName==> "+mRoomName+";"+"roomToken==> "+roomToken);
         mRTCStreamingManager.startConference(UserID, mRoomName, roomToken, new RTCStartConferenceCallback() {
             @Override
             public void onStartConferenceSuccess() {

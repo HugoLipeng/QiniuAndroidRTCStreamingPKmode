@@ -100,4 +100,20 @@
             android:layout_marginLeft="2dp" />
     </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|right"
+        android:layout_margin="20dp"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:onClick="onClickSwitchScreen"
+            android:src="@drawable/ic_switch_screen" />
+
+    </LinearLayout>
+
 </FrameLayout>

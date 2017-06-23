@@ -223,9 +223,9 @@ public class MainActivity extends AppCompatActivity {
                 String roomToken = mRoomTokenEditText.getText().toString();//getIntent().getStringExtra("token");//StreamUtils.requestRoomToken(roomName);
                 Log.d("hugo","roomToken: " + roomToken);
 
-                if (mRoomId == null || playURL == null || roomToken == null) {
+                if (playURL == null) {
                     dismissProgressDialog();
-                    showToastTips("无法获取播放地址或者房间信息 !");
+                    showToastTips("无法获取播放地址!");
                     return;
                 }
                 //dismissProgressDialog();
@@ -234,7 +234,7 @@ public class MainActivity extends AppCompatActivity {
                 intent.putExtra("videoPath", playURL);
                 intent.putExtra("roomName", mRoomName);
                 intent.putExtra("token",roomToken);
-                intent.putExtra("roomId",mRoomID);
+                intent.putExtra("roomId",mRoomId);
                 startActivity(intent);
             }
         });

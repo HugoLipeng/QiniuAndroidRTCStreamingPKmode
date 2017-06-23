@@ -43,6 +43,10 @@ public class AudienceActivity extends AppCompatActivity {
 
     private static final String TAG = AudienceActivity.class.getSimpleName();
 
+    private static final int MESSAGE_ID_RECONNECTING = 0x01;
+    private static final int MESSAGE_ID_STARTCONFERENCE = 0x02;
+    private int mDisplayAspectRatio = PLVideoView.ASPECT_RATIO_FIT_PARENT;
+
     private TextView mStatusTextView;
 
     private Button mControlButton;
@@ -80,15 +84,13 @@ public class AudienceActivity extends AppCompatActivity {
     private String mVideoPath = null;
     private String mRoomName;
     private String mRoomToken;
+    private int mIsLiveStreaming = 1;
 
     Handler mHandler = new Handler() {
         public void handleMessage(Message msg) {
             switch (msg.what) {
-                case 100:
-                    startConference();
-                    break;
-                case 200:
-                    /*if (mIsActivityPaused || !Utils.isLiveStreamingAvailable()) {
+                case MESSAGE_ID_RECONNECTING:
+                    if (mIsActivityPaused || !Utils.isLiveStreamingAvailable()) {
                         finish();
                         return;
                     }
@@ -97,8 +99,11 @@ public class AudienceActivity extends AppCompatActivity {
                         return;
                     }
                     mVideoView.setVideoPath(mVideoPath);
-                    mVideoView.start();*/
+                    mVideoView.start();
 
+                    break;
+                case MESSAGE_ID_STARTCONFERENCE:
+                    startConference();
                     break;
             }
         }
@@ -122,21 +127,10 @@ public class AudienceActivity extends AppCompatActivity {
         mLiveUrl = mVideoPath;
         mToken   = mRoomToken;
 
-        AVOptions options = new AVOptions();
-        options.setInteger(AVOptions.KEY_PREPARE_TIMEOUT, 10 * 1000);
-        options.setInteger(AVOptions.KEY_GET_AV_FRAME_TIMEOUT, 10 * 1000);
-        options.setInteger(AVOptions.KEY_LIVE_STREAMING, 1);
-        options.setInteger(AVOptions.KEY_DELAY_OPTIMIZATION, 1);
 
-        // 1 -> hw codec enable, 0 -> disable [recommended]
-        int codec = getIntent().getIntExtra("mediaCodec", 0);
-        options.setInteger(AVOptions.KEY_MEDIACODEC, codec);
-
-        // whether start play automatically after prepared, default value is 1
-        options.setInteger(AVOptions.KEY_START_ON_PREPARED, 0);
-
-        mVideoView.setAVOptions(options);
-        mVideoView.setDisplayAspectRatio(PLVideoView.ASPECT_RATIO_PAVED_PARENT);
+        mVideoView.setDisplayAspectRatio(PLVideoView.ASPECT_RATIO_FIT_PARENT);
+        int codec = getIntent().getIntExtra("mediaCodec", AVOptions.MEDIA_CODEC_SW_DECODE);
+        setOptions(codec);
 
         // Set some listeners
         mVideoView.setOnInfoListener(mOnInfoListener);
@@ -153,6 +147,29 @@ public class AudienceActivity extends AppCompatActivity {
         RTCMediaStreamingManager.init(getApplicationContext());
         ConferenceInit();
     }
+
+    private void setOptions(int codecType) {
+        AVOptions options = new AVOptions();
+
+        // the unit of timeout is ms
+        options.setInteger(AVOptions.KEY_PREPARE_TIMEOUT, 10 * 1000);
+        options.setInteger(AVOptions.KEY_GET_AV_FRAME_TIMEOUT, 10 * 1000);
+        options.setInteger(AVOptions.KEY_PROBESIZE, 128 * 1024);
+        // Some optimization with buffering mechanism when be set to 1
+        options.setInteger(AVOptions.KEY_LIVE_STREAMING, mIsLiveStreaming);
+        if (mIsLiveStreaming == 1) {
+            options.setInteger(AVOptions.KEY_DELAY_OPTIMIZATION, 1);
+        }
+
+        // 1 -> hw codec enable, 0 -> disable [recommended]
+        options.setInteger(AVOptions.KEY_MEDIACODEC, codecType);
+
+        // whether start play automatically after prepared, default value is 1
+        options.setInteger(AVOptions.KEY_START_ON_PREPARED, 0);
+
+        mVideoView.setAVOptions(options);
+    }
+
 
     public void ConferenceInit(){
         //自己的显示布局
@@ -296,7 +313,7 @@ public class AudienceActivity extends AppCompatActivity {
         }
 
         String UserID = mRoomId;//StreamUtils.PEER_RTC_USER_ID;
-
+        Log.d(TAG, "vice startConferenceInternal: UserId ==> "+UserID+";"+"RoomName==> "+mRoomName+";"+"roomToken==> "+roomToken);
         mRTCStreamingManager.startConference(UserID, mRoomName, roomToken, new RTCStartConferenceCallback() {
             @Override
             public void onStartConferenceSuccess() {
@@ -344,8 +361,8 @@ public class AudienceActivity extends AppCompatActivity {
                 case READY:
                     // You must `StartConference` after `Ready`
                     Message message = new Message();
-                    message.what = 100;
-                    mHandler.sendMessage(message);
+                    mHandler.removeCallbacksAndMessages(null);
+                    mHandler.sendMessageDelayed(mHandler.obtainMessage(MESSAGE_ID_STARTCONFERENCE), 500);
                     showToast(getString(R.string.ready), Toast.LENGTH_SHORT);
                     break;
                 /**
@@ -635,9 +652,34 @@ public class AudienceActivity extends AppCompatActivity {
         }
     };
 
+    public void onClickSwitchScreen(View v) {
+        mDisplayAspectRatio = (mDisplayAspectRatio + 1) % 5;
+        mVideoView.setDisplayAspectRatio(mDisplayAspectRatio);
+        switch (mVideoView.getDisplayAspectRatio()) {
+            case PLVideoView.ASPECT_RATIO_ORIGIN:
+                showToastTips("Origin mode");
+                break;
+            case PLVideoView.ASPECT_RATIO_FIT_PARENT:
+                showToastTips("Fit parent !");
+                break;
+            case PLVideoView.ASPECT_RATIO_PAVED_PARENT:
+                showToastTips("Paved parent !");
+                break;
+            case PLVideoView.ASPECT_RATIO_16_9:
+                showToastTips("16 : 9 !");
+                break;
+            case PLVideoView.ASPECT_RATIO_4_3:
+                showToastTips("4 : 3 !");
+                break;
+            default:
+                break;
+        }
+    }
+
     private PLMediaPlayer.OnErrorListener mOnErrorListener = new PLMediaPlayer.OnErrorListener() {
         @Override
         public boolean onError(PLMediaPlayer plMediaPlayer, int errorCode) {
+            boolean isNeedReconnect = false;
             Log.e(TAG, "Error happened, errorCode = " + errorCode);
             switch (errorCode) {
                 case PLMediaPlayer.ERROR_CODE_INVALID_URI:
@@ -651,35 +693,46 @@ public class AudienceActivity extends AppCompatActivity {
                     break;
                 case PLMediaPlayer.ERROR_CODE_CONNECTION_TIMEOUT:
                     showToastTips("Connection timeout !");
+                    isNeedReconnect = true;
                     break;
                 case PLMediaPlayer.ERROR_CODE_EMPTY_PLAYLIST:
                     showToastTips("Empty playlist !");
                     break;
                 case PLMediaPlayer.ERROR_CODE_STREAM_DISCONNECTED:
                     showToastTips("Stream disconnected !");
+                    isNeedReconnect = true;
                     break;
                 case PLMediaPlayer.ERROR_CODE_IO_ERROR:
                     showToastTips("Network IO Error !");
+                    isNeedReconnect = true;
                     break;
                 case PLMediaPlayer.ERROR_CODE_UNAUTHORIZED:
                     showToastTips("Unauthorized Error !");
                     break;
                 case PLMediaPlayer.ERROR_CODE_PREPARE_TIMEOUT:
                     showToastTips("Prepare timeout !");
+                    isNeedReconnect = true;
                     break;
                 case PLMediaPlayer.ERROR_CODE_READ_FRAME_TIMEOUT:
                     showToastTips("Read frame timeout !");
+                    isNeedReconnect = true;
+                    break;
+                case PLMediaPlayer.ERROR_CODE_HW_DECODE_FAILURE:
+                    setOptions(AVOptions.MEDIA_CODEC_SW_DECODE);//to do
+                    isNeedReconnect = true;
                     break;
                 case PLMediaPlayer.MEDIA_ERROR_UNKNOWN:
+                    break;
                 default:
                     showToastTips("unknown error !");
                     break;
             }
-            // Todo pls handle the error status here, retry or call finish()
-            finish();
-            // If you want to retry, do like this:
-            // mVideoView.setVideoPath(mVideoPath);
-            // mVideoView.start();
+            // Todo pls handle the error status here, reconnect or call finish()
+            if (isNeedReconnect) {
+                sendReconnectMessage();
+            } else {
+                finish();
+            }
             // Return true means the error has been handled
             // If return false, then `onCompletion` will be called
             return true;
@@ -695,7 +748,7 @@ public class AudienceActivity extends AppCompatActivity {
         }
     };
 
-    private static final int MESSAGE_ID_RECONNECTING = 0x01;
+
 
     /**
     To do
