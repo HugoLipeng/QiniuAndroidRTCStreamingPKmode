@@ -39,11 +39,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.AnchorStreamingActivity"
+        <activity android:name=".activity.AnchorActivity"
             android:theme="@style/AppThemeSelfSet"
             android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait" />
-        <activity android:name=".activity.ViceActivity"
+        <activity android:name=".activity.ViceAnchorActivity"
             android:theme="@style/AppThemeSelfSet"
             android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait" />

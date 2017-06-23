@@ -49,7 +49,7 @@ import java.util.List;
 /**
  *  演示使用 SDK 内部的 Video/Audio 采集，实现连麦 & 推流
  */
-public class AnchorStreamingActivity extends AppCompatActivity {
+public class AnchorActivity extends AppCompatActivity {
     private static final String TAG = "RTCMediaStreaming";
 
     private TextView mStatusTextView;
@@ -73,6 +73,7 @@ public class AnchorStreamingActivity extends AppCompatActivity {
     private String mRoomName;
     private String mLiveUrl;
     private String mToken;
+    private String mRoomId;
 
     private FrameLayout mPeerfl;
     private GLSurfaceView mPeerView;
@@ -101,12 +102,14 @@ public class AnchorStreamingActivity extends AppCompatActivity {
         mAfl = (AspectFrameLayout) findViewById(R.id.cameraPreview_afl);
 //        mAfl.setAspectRatio(0.8);
 //        mAfl.setShowMode(AspectFrameLayout.SHOW_MODE.REAL);
-         mAfl.setShowMode(AspectFrameLayout.SHOW_MODE.FULL);
+        mAfl.setShowMode(AspectFrameLayout.SHOW_MODE.FULL);
         mCameraView =(GLSurfaceView) findViewById(R.id.cameraPreview_surfaceView);
 
-        mRoomName = getIntent().getStringExtra("roomName");
+
         mLiveUrl = getIntent().getStringExtra("liveUrl");
-        mToken   = getIntent().getStringExtra("token");
+        mRoomId  = getIntent().getStringExtra("roomId");
+        mRoomName  = getIntent().getStringExtra("roomName");
+        mToken = getIntent().getStringExtra("token");
 
         mControlButton = (Button) findViewById(R.id.ControlButton);
         mStatusTextView = (TextView) findViewById(R.id.StatusTextView);
@@ -147,9 +150,9 @@ public class AnchorStreamingActivity extends AppCompatActivity {
         options.setVideoEncodingSizeRatio(RTCConferenceOptions.VIDEO_ENCODING_SIZE_RATIO.RATIO_16_9);
         options.setVideoEncodingSizeLevel(RTCConferenceOptions.VIDEO_ENCODING_SIZE_HEIGHT_480);
         // anchor can use a smaller conference bitrate in order to reserve enough bandwidth for rtmp streaming
-        options.setVideoBitrateRange(800 * 1000, 1000 * 1000);
+        options.setVideoBitrateRange(500 * 1000, 800 * 1000);
         // 24 fps is enough
-        options.setVideoEncodingFps(25);
+        options.setVideoEncodingFps(15);
 
         mRTCStreamingManager.setConferenceOptions(options);
 
@@ -161,11 +164,21 @@ public class AnchorStreamingActivity extends AppCompatActivity {
         // The anchor must configure the mix stream position and size
         // set mix overlay params with absolute value
         // the w & h of remote window equals with or smaller than the vice anchor can reduce cpu consumption
-        mRTCStreamingManager.setLocalWindowPosition(new RectF(0, 0.25f, 0.5f, 0.75f));//七牛的bug
+        mRTCStreamingManager.setLocalWindowPosition(new RectF(0, 0, 0.5f, 0.5f));//七牛的bug
+        //mRTCStreamingManager.setLocalWindowPosition(new RectF(0, 0.25f, 0.5f, 0.75f));/
 //         windowA.setAbsolutetMixOverlayRect(240, 100, 240, 320);
-        windowA.setRelativeMixOverlayRect(0.5f, 0.25f, 0.5f, 0.5f);
+        windowA.setRelativeMixOverlayRect(0.5f, 0.0f, 0.5f, 0.5f);
+        //windowA.setRelativeMixOverlayRect(0.5f, 0.25f, 0.5f, 0.5f);
         // set mix overlay params with relative value
         // windowA.setRelativeMixOverlayRect(0.65f, 0.2f, 0.3f, 0.3f);
+
+        /*setLocalWindowPosition(new RectF(0, 0, 0.5f, 0.5f));
+        setRelativeMixOverlayRect(0.5f, 0.0f, 0.5f, 0.5f);
+        this.left = left;
+        this.top = top;
+        this.right = right;
+        this.bottom = bottom;
+        */
 
         mRTCStreamingManager.addRemoteWindow(windowA);
 
@@ -176,9 +189,9 @@ public class AnchorStreamingActivity extends AppCompatActivity {
 
         mStreamingProfile = new StreamingProfile();
         mStreamingProfile.setVideoQuality(StreamingProfile.VIDEO_QUALITY_MEDIUM2)
-                    .setAudioQuality(StreamingProfile.AUDIO_QUALITY_MEDIUM1)
-                    .setEncoderRCMode(StreamingProfile.EncoderRCModes.QUALITY_PRIORITY)
-                    .setEncodingOrientation(StreamingProfile.ENCODING_ORIENTATION.PORT)
+                .setAudioQuality(StreamingProfile.AUDIO_QUALITY_MEDIUM1)
+                .setEncoderRCMode(StreamingProfile.EncoderRCModes.QUALITY_PRIORITY)
+                .setEncodingOrientation(StreamingProfile.ENCODING_ORIENTATION.PORT)
 //                    .setPreferredVideoEncodingSize(options.getVideoEncodingWidth()   , options.getVideoEncodingHeight());
                 .setPreferredVideoEncodingSize(360, 640);
 
@@ -266,8 +279,8 @@ public class AnchorStreamingActivity extends AppCompatActivity {
             return false;
         }
 
-        String UserID = StreamUtils.DEFAULT_RTC_USER_ID;
-
+        String UserID = mRoomId;//StreamUtils.DEFAULT_RTC_USER_ID;
+        showToast("传入的连麦参数"+"Id==>"+UserID+";"+"roomname==>"+mRoomName+";"+"roomToken==>"+roomToken+";", Toast.LENGTH_SHORT);
         mRTCStreamingManager.startConference(UserID, mRoomName, roomToken, new RTCStartConferenceCallback() {
             @Override
             public void onStartConferenceSuccess() {
@@ -336,11 +349,10 @@ public class AnchorStreamingActivity extends AppCompatActivity {
     }
 
     private boolean startPublishStreamingInternal() {
-        String roomToken = mToken;//StreamUtils.requestRoomToken(mRoomName);
         String publishAddr = mLiveUrl;//StreamUtils.requestPublishAddress(mRoomName);
-        if (roomToken == null || publishAddr == null) {
+        if (publishAddr == null) {
             dismissProgressDialog();
-            showToast("无法获取房间信息/推流地址 !", Toast.LENGTH_SHORT);
+            showToast("无法获取推流地址 !", Toast.LENGTH_SHORT);
             return false;
         }
 
@@ -511,6 +523,7 @@ public class AnchorStreamingActivity extends AppCompatActivity {
     private RTCConferenceStateChangedListener mRTCStreamingStateChangedListener = new RTCConferenceStateChangedListener() {
         @Override
         public void onConferenceStateChanged(RTCConferenceState state, int extra) {
+            Log.e(TAG, "onConferenceStateChanged: rtc state ==> "+ state );
             switch (state) {
                 case READY:
                     // You must `StartConference` after `Ready`
@@ -647,7 +660,7 @@ public class AnchorStreamingActivity extends AppCompatActivity {
             }
         }
     };
-    
+
     public void onClickStreaming(View v) {
         if (!mIsPublishStreamStarted) {
             startPublishStreaming();
@@ -728,7 +741,7 @@ public class AnchorStreamingActivity extends AppCompatActivity {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(AnchorStreamingActivity.this, text, duration).show();
+                Toast.makeText(AnchorActivity.this, text, duration).show();
             }
         });
     }

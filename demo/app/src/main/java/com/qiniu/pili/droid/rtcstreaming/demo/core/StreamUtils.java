@@ -21,7 +21,7 @@ public class StreamUtils {
     // 用户 ID 可以使用业务上的用户 ID
     // 这里为了演示方便，直接使用了随机值
     public static final String DEFAULT_RTC_USER_ID = UUID.randomUUID().toString();
-    public static final String PEER_RTC_USER_ID = “10086”;
+    public static final String PEER_RTC_USER_ID = "10086";
 
     // 业务服务器的地址，需要能提供推流地址、播放地址、RoomToke
     // 这里原本填写的是七牛的测试业务服务器，现在需要改写为客户自己的业务服务器
@@ -67,7 +67,7 @@ public class StreamUtils {
     // 例如：http://www.xxx.com/api/room/room001/user/user001/token
     // 这个 “房间号” 必须是业务服务器事先手动为 “主播” 创建的 “连麦房间号”，不能随意设置
     public static String requestRoomToken(String roomName) {
-        String url = "http://t.xiehou360.com/LiveWebServer/qiniu_mic.do?action=join&uid=110001&roomName="+roomName;
+        String url = "to do";
         return doRequest("GET", url);
     }
 

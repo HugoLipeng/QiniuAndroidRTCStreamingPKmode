@@ -18,6 +18,22 @@
             android:layout_marginLeft="15dp"
             android:layout_marginBottom="10dp"
             android:textStyle="bold"
+            android:text="输入连麦房间ID: " />
+
+        <EditText
+            android:id="@+id/RoomIdEditView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginBottom="10dp"
+            android:textStyle="bold"
             android:text="输入连麦房间名称: " />
 
         <EditText
@@ -43,7 +59,39 @@
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp" />
 
-        <Button
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginBottom="10dp"
+            android:textStyle="bold"
+            android:text="输入推流地址: " />
+
+        <EditText
+            android:id="@+id/RoomRtmpUrlEditView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginBottom="10dp"
+            android:textStyle="bold"
+            android:text="输入播放地址: " />
+
+        <EditText
+            android:id="@+id/RoomPlayUrlEditView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp" />
+
+        <!--<Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="请求房间ID"
@@ -59,7 +107,7 @@
             android:layout_marginTop="10dp"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
-            android:onClick="onClickToken" />
+            android:onClick="onClickToken" />-->
 
         <Button
             android:layout_width="match_parent"

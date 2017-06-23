@@ -38,9 +38,9 @@ import com.qiniu.pili.droid.streaming.StreamStatusCallback;
 import com.qiniu.pili.droid.streaming.StreamingProfile;
 import com.qiniu.pili.droid.streaming.widget.AspectFrameLayout;
 
-public class ViceActivity extends AppCompatActivity {
+public class ViceAnchorActivity extends AppCompatActivity {
 
-    private static final String TAG = ViceActivity.class.getSimpleName();
+    private static final String TAG = ViceAnchorActivity.class.getSimpleName();
 
     private TextView mStatusTextView;
 
@@ -62,6 +62,7 @@ public class ViceActivity extends AppCompatActivity {
 
     private String mLiveUrl;
     private String mToken;
+    private String mRoomId;
 
     private FrameLayout mPeerfl;
     private GLSurfaceView mPeerView;
@@ -104,6 +105,7 @@ public class ViceActivity extends AppCompatActivity {
         mVideoView.setBufferingIndicator(mLoadingView);
 
         mVideoPath = getIntent().getStringExtra("videoPath");
+        mRoomId  = getIntent().getStringExtra("roomId");
         mRoomName  = getIntent().getStringExtra("roomName");
         mRoomToken = getIntent().getStringExtra("token");
 
@@ -234,7 +236,7 @@ public class ViceActivity extends AppCompatActivity {
 
     public void StopCapture(){
         if(mIsActivityPaused==false){
-           mIsActivityPaused = true;
+            mIsActivityPaused = true;
 //        stopConference();
             mRTCStreamingManager.stopCapture();
         }
@@ -283,7 +285,7 @@ public class ViceActivity extends AppCompatActivity {
             return false;
         }
 
-        String UserID = StreamUtils.PEER_RTC_USER_ID;
+        String UserID = mRoomId;//StreamUtils.PEER_RTC_USER_ID;
 
         mRTCStreamingManager.startConference(UserID, mRoomName, roomToken, new RTCStartConferenceCallback() {
             @Override
@@ -522,7 +524,7 @@ public class ViceActivity extends AppCompatActivity {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(ViceActivity.this, text, duration).show();
+                Toast.makeText(ViceAnchorActivity.this, text, duration).show();
             }
         });
     }
@@ -685,7 +687,7 @@ public class ViceActivity extends AppCompatActivity {
                 if (mToast != null) {
                     mToast.cancel();
                 }
-                mToast = Toast.makeText(ViceActivity.this, tips, Toast.LENGTH_SHORT);
+                mToast = Toast.makeText(ViceAnchorActivity.this, tips, Toast.LENGTH_SHORT);
                 mToast.show();
             }
         });
