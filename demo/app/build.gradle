@@ -23,8 +23,8 @@ android {
 dependencies {
     compile 'com.android.support:appcompat-v7:22+'
     compile 'com.qiniu:happy-dns:0.2.8'
-    compile 'com.qiniu.pili:pili-android-qos:0.8.4'
+    compile 'com.qiniu.pili:pili-android-qos:0.8.20'
     compile files('libs/pldroid-player-1.5.1.jar')
-    compile files('libs/pldroid-rtc-streaming-1.0.4.jar')
     compile 'com.android.support:multidex:1.0.1'
+    compile files('libs/pldroid-rtc-streaming-1.1.0.jar')
 }

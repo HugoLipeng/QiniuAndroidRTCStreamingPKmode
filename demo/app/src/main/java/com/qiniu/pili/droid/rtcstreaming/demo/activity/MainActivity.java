@@ -204,7 +204,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onClickAnchor(View v) {
-        jumpToStreamingActivity(StreamUtils.RTC_ROLE_ANCHOR, AnchorActivity.class);
+        jumpToStreamingActivity(StreamUtils.RTC_ROLE_ANCHOR, LiveActivity.class);
     }
 
     public void onClickAudience(View v) {
@@ -230,7 +230,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 //dismissProgressDialog();
                 Log.d(TAG,"Playback: " + playURL);
-                Intent intent = new Intent(MainActivity.this, ViceAnchorActivity.class);
+                Intent intent = new Intent(MainActivity.this, AudienceActivity.class);
                 intent.putExtra("videoPath", playURL);
                 intent.putExtra("roomName", mRoomName);
                 intent.putExtra("token",roomToken);

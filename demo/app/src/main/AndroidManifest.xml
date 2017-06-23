@@ -39,11 +39,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.AnchorActivity"
+        <activity android:name=".activity.LiveActivity"
             android:theme="@style/AppThemeSelfSet"
             android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait" />
-        <activity android:name=".activity.ViceAnchorActivity"
+        <activity android:name=".activity.AudienceActivity"
             android:theme="@style/AppThemeSelfSet"
             android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait" />
