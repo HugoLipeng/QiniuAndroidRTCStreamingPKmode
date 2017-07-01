@@ -11,7 +11,7 @@ import com.qiniu.pili.droid.rtcstreaming.demo.utils.SpUtils;
 
 /**
  * @desc 启动屏
- * Created by hugo.
+ * hugo.
  */
 public class SplashActivity extends Activity {
     @Override
