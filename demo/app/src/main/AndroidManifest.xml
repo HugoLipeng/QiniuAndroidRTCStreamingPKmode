@@ -31,22 +31,37 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppThemeSelfSet">
-        <activity android:name=".activity.MainActivity"
-            android:configChanges="orientation|screenSize"
-            android:screenOrientation="portrait" >
+        <activity
+            android:name=".activity.SplashActivity"
+            android:label="@string/app_name"
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".activity.WelcomeGuideActivity"
+            android:theme="@android:style/Theme.Holo.Light.NoActionBar.Fullscreen"
+
+            />
+        <activity android:name=".activity.MainActivity"
+            android:configChanges="orientation|screenSize"
+            android:screenOrientation="portrait" >
+        </activity>
+
         <activity android:name=".activity.LiveActivity"
             android:theme="@style/AppThemeSelfSet"
             android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait" />
+
         <activity android:name=".activity.AudienceActivity"
             android:theme="@style/AppThemeSelfSet"
             android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait" />
+
     </application>
 
 </manifest>

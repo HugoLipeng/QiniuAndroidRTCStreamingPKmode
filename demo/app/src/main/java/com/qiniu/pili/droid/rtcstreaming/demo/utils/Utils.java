@@ -6,6 +6,8 @@ import android.net.NetworkInfo;
 
 public class Utils {
 
+    public static final String FIRST_OPEN = "first_open";
+
     public static boolean isNetworkAvailable(Context context) {
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo netInfo = cm.getActiveNetworkInfo();
