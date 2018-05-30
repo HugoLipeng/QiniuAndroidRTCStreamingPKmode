@@ -8,8 +8,8 @@ import java.util.Date;
 
 public class myClass {
     // Replace with your keys here
-    private static final String ACCESS_KEY = "Ib4CRWyIRVGHilI8ECRjlilTUsrUUvVah5jjtVPg"; //填入你自己的ACCESS_KEY
-    private static final String SECRET_KEY = "nUEVMeT9xVhwOZdb2nKQc2jno7hyAM_0nf26LEbC";  //填入你自己的SECRET_KEY
+    private static final String ACCESS_KEY = "abc"; //填入你自己的ACCESS_KEY
+    private static final String SECRET_KEY = "acd";  //填入你自己的SECRET_KEY
     // Replace with your hub name
     private static final String HUB_NAME = "lipengv2"; // 填入你们自己的直播空间名称
     private static Meeting meeting;
