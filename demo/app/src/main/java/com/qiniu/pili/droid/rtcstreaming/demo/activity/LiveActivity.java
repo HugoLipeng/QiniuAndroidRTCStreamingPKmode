@@ -178,7 +178,7 @@ public class LiveActivity extends AppCompatActivity implements AudioSourceCallba
         // The anchor must configure the mix stream position and size
         // set mix overlay params with absolute value
         // the w & h of remote window equals with or smaller than the vice anchor can reduce cpu consumption
-        mRTCStreamingManager.setLocalWindowPosition(new RectF(0, 0, 0.5f, 0.5f));//
+        mRTCStreamingManager.setLocalWindowPosition(new RectF(0, 0, 0.5f, 0.5f));//PK mode
         //mRTCStreamingManager.setLocalWindowPosition(new RectF(0, 0.25f, 0.5f, 0.75f));/
 //         windowA.setAbsolutetMixOverlayRect(240, 100, 240, 320);
         windowA.setRelativeMixOverlayRect(0.5f, 0.0f, 0.5f, 0.5f);

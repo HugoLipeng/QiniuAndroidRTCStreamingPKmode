@@ -129,8 +129,8 @@ public class AudienceActivity extends AppCompatActivity {
 
 
         mVideoView.setDisplayAspectRatio(PLVideoView.ASPECT_RATIO_FIT_PARENT);
-        int codec = getIntent().getIntExtra("mediaCodec", AVOptions.MEDIA_CODEC_SW_DECODE);
-        setOptions(codec);
+        //int codec = getIntent().getIntExtra("mediaCodec", AVOptions.MEDIA_CODEC_SW_DECODE);
+        setOptions(AVOptions.MEDIA_CODEC_HW_DECODE);
 
         // Set some listeners
         mVideoView.setOnInfoListener(mOnInfoListener);
@@ -226,9 +226,9 @@ public class AudienceActivity extends AppCompatActivity {
         options.setVideoEncodingSizeRatio(RTCConferenceOptions.VIDEO_ENCODING_SIZE_RATIO.RATIO_4_3);
         options.setVideoEncodingSizeLevel(RTCConferenceOptions.VIDEO_ENCODING_SIZE_HEIGHT_480);
         // vice anchor can use a higher conference bitrate for better image quality
-        options.setVideoBitrateRange(800 * 1000, 1000 * 1000);
-        // 24 fps is enough
-        options.setVideoEncodingFps(25);
+        options.setVideoBitrateRange(300 * 1000, 800 * 1000);
+        // 15 fps is enough
+        options.setVideoEncodingFps(15);
 
         mRTCStreamingManager.setConferenceOptions(options);
 
@@ -719,6 +719,7 @@ public class AudienceActivity extends AppCompatActivity {
                     break;
                 case PLMediaPlayer.ERROR_CODE_HW_DECODE_FAILURE:
                     setOptions(AVOptions.MEDIA_CODEC_SW_DECODE);//to do
+                    Toast.makeText(AudienceActivity.this, "硬解失败，切换软解", Toast.LENGTH_SHORT).show();
                     isNeedReconnect = true;
                     break;
                 case PLMediaPlayer.MEDIA_ERROR_UNKNOWN:
